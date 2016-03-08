@@ -1,0 +1,41 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*-
+# $Id$
+
+PortSystem          1.0
+PortGroup           github 1.0
+
+github.setup        boot-clj boot-bin 2.5.2
+name                boot-clj
+github.tarball_from releases
+distname            boot
+extract.suffix      .sh
+
+categories          devel java
+maintainers         nomaintainer
+homepage            http://boot-clj.com/
+platforms           darwin
+supported_archs     noarch
+license             EPL-1
+
+description         Desc
+long_description    ${description}
+
+checksums           rmd160  41516ac5f82439ff158354d68c759973f57e26d2 \
+                    sha256  895def8ef37f4b78bb37a26566ce970dc24219e880154a18ef7ade5a778d3a2f
+
+use_configure       no
+
+extract {
+    file copy ${distpath}/${distfiles} ${workpath}/${distname}
+}
+
+# We know we don't need the post-extract procedure from the github portgroup
+post-extract {}
+
+# Nothing to build
+build   {}
+
+destroot {
+    xinstall -m 0755 ${workpath}/${distname} ${destroot}${prefix}/bin
+}
+
