@@ -40,4 +40,24 @@ destroot {
     xinstall -m 0755 -d ${destroot}${javadir}
     xinstall -m 0755 ${worksrcpath}/bin/lein ${destroot}${prefix}/bin
     xinstall -m 0644 ${worksrcpath}/leiningen.jar ${destroot}${javadir}
+
+    if {[variant_isset bash_completion]} {
+        set completions_path ${prefix}/share/bash-completion/completions
+        xinstall -d ${destroot}${completions_path}
+        xinstall -m 644 ${worksrcpath}/bash_completion.bash ${destroot}${completions_path}/leiningen
+        ln -s ${completions_path}/leiningen ${destroot}${completions_path}/lein
+    }
+
+    if {[variant_isset zsh_completion]} {
+        set site_functions_path ${destroot}${prefix}/share/zsh/site-functions
+        xinstall -d ${site_functions_path}
+        xinstall -m 644 ${worksrcpath}/zsh_completion.zsh ${site_functions_path}/_lein
+    }
+}
+
+variant bash_completion description {Add Bash completion} {
+    depends_run-append path:etc/bash_completion:bash-completion
+}
+variant zsh_completion description {Add Zsh completion} {
+    depends_run-append path:${prefix}/bin/zsh:zsh
 }
