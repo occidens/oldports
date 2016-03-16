@@ -1,4 +1,5 @@
 SOURCES = "/opt/local/etc/macports/sources.conf"
+require 'rugged'
 
 file ".git/hooks/post-commit" do |t|
   File.open(t.name, "w") { |f| f.puts "rake PortIndex" }
@@ -13,6 +14,21 @@ end
 desc "List local ports."
 task :list do
   puts Dir["**/Portfile"]. map { |f| File.dirname f }.join("\n")
+end
+
+desc "Set up git-svn remote and fetch MacPorts trunk"
+task :macports do
+  baserev = "146722"
+  repo = Rugged::Repository.new('.')
+
+  repo.config['svn-remote.macports.url'] =
+    'https://svn.macports.org/repository/macports'
+
+  repo.config['svn-remote.macports.fetch'] =
+    'trunk/dports:refs/remotes/macports/trunk'
+
+  sh "git svn fetch macports -r #{baserev}:HEAD"
+  repo.branches.create("macports-trunk", "macports/trunk")
 end
 
 desc "Install source and post-commit hook, build Port index."
