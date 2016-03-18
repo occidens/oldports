@@ -1,0 +1,25 @@
+# -*- coding: utf-8; mode: tcl; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4; truncate-lines: t -*- vim:fenc=utf-8:et:sw=4:ts=4:sts=4
+# $Id$
+
+PortSystem          1.0
+PortGroup           github 1.0
+
+github.setup        jessek hashdeep 4.4 v
+
+categories          security sysutils
+description         Recursively compute digests on files/directories
+long_description    md5deep and hashdeep are a cross-platform set of programs to recursively \
+    compute MD5, SHA-1, or SHA-256 message digests on an arbitrary number of \
+    files
+
+platforms           darwin
+license             public-domain
+
+homepage            https://github.com/jessek/hashdeep
+
+checksums           rmd160  d92dcc3d9154a84d79e7807918eb5abb2e80940a \
+                    sha256  ec9d74a20016ec4f03914b6c42776d5fe4c7ffa63b73c85d07330abcb8327b3f
+
+pre-configure {
+    system "cd ${worksrcpath} ; sh bootstrap.sh"
+}
