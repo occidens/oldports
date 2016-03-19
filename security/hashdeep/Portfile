@@ -21,7 +21,7 @@ checksums           rmd160  d92dcc3d9154a84d79e7807918eb5abb2e80940a \
                     sha256  ec9d74a20016ec4f03914b6c42776d5fe4c7ffa63b73c85d07330abcb8327b3f
 
 pre-configure {
-    system "cd ${worksrcpath} ; sh bootstrap.sh"
+    system -W ${worksrcpath} "sh bootstrap.sh"
 }
 
 post-destroot {
