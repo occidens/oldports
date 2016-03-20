@@ -104,6 +104,12 @@ task :checkout, :portdir do |t, args|
   end
 end
 
+desc "Diff against MacPorts trunk"
+task :diff, :path do |t, args|
+  paths = FileList.new(args[:path])
+  paths.include(args.extras)
+  ENV["GIT_EXTERNAL_DIFF"]="./diff.rb"
+  sh "git diff macports-trunk..master #{paths}"
 end
 
 desc "Install source and post-commit hook, build Port index."
