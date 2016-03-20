@@ -9,6 +9,7 @@ categories          devel java
 maintainers         nomaintainer
 platforms           darwin
 supported_archs     noarch
+license             EPL-1
 
 description         A build tool for Clojure designed to not set your hair on fire.
 long_description    ${description}
