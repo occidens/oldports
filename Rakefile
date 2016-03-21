@@ -17,6 +17,8 @@ require 'nokogiri'
 # # end
 
 REPOURL = "https://svn.macports.org/repository/macports/trunk/dports"
+REPOREF = "refs/remotes/macports/trunk"
+REPO_TRACK_BRANCH = "macports-trunk"
 
 $portfiles = FileList[]
 $min_rev = "1"
@@ -45,6 +47,12 @@ task :list do
   puts $portdirs.join("\n") if ARGV.include?("list")
 end
 
+namespace :git do
+  task :repo do
+    $repo = Rugged::Repository.new('.')
+  end
+end
+
 namespace :svn do
 
   desc "Find the oldest applicable revision"
@@ -69,23 +77,27 @@ namespace :svn do
     puts info
   end
 
-  task :config do
-    repo = Rugged::Repository.new('.')
+  task :config => 'git:repo' do
+    $repo.config['svn-remote.macports.url'] =
+      "https://svn.macports.org/repository/macports"
 
-    repo.config['svn-remote.macports.url'] =
-      'https://svn.macports.org/repository/macports'
-
-    repo.config['svn-remote.macports.fetch'] =
-      'trunk/dports:refs/remotes/macports/trunk'
+    $repo.config['svn-remote.macports.fetch'] =
+      "trunk/dports:#{REPOREF}"
   end
 
-  task :fetch do
+  task :fetch => 'git:repo' do
     revs = $min_rev == "1" ? "" : "-r #{$min_rev}:HEAD"
     sh "git svn fetch macports #{revs}"
+
+    remote_sha = $repo.references[REPOREF].target.oid
+    local_ref = $repo.branches[REPO_TRACK_BRANCH].canonical_name
+    $repo.references.update(local_ref, remote_sha)
+
+    puts "Updated #{REPO_TRACK_BRANCH}"
   end
 
   task :macports => [:config, :min_rev, :fetch] do
-    repo.branches.create("macports-trunk", "macports/trunk")
+    $repo.branches.create(REPO_TRACK_BRANCH, "macports/trunk")
   end
 
 end
@@ -105,11 +117,11 @@ task :checkout, :portdir do |t, args|
 end
 
 desc "Diff against MacPorts trunk"
-task :diff, :path do |t, args|
+task :diff, [:path] => 'svn:fetch' do |t, args|
   paths = FileList.new(args[:path])
   paths.include(args.extras)
   ENV["GIT_EXTERNAL_DIFF"]="./diff.rb"
-  sh "git diff macports-trunk..master #{paths}"
+  sh "git diff macports-trunk..HEAD #{paths}"
 end
 
 desc "Install source and post-commit hook, build Port index."
