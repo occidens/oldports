@@ -1,7 +1,6 @@
 require 'pathname'
 require 'rugged'
 require 'nokogiri'
-# require './svn.rb'
 
 # PORT = Pathname.new(%x[which port].strip)
 # $?.success? or raise "Could not locate MacPorts"
@@ -116,12 +115,50 @@ task :checkout, :portdir do |t, args|
   end
 end
 
+def diff(sources, outfile=nil)
+  cmd = "git diff macports-trunk..HEAD -- #{sources}" +
+        ( outfile ? " | tee #{outfile}" : "" )
+  ENV["GIT_EXTERNAL_DIFF"]="./diff.rb"
+  sh cmd
+end
+
 desc "Diff against MacPorts trunk"
 task :diff, [:path] => 'svn:fetch' do |t, args|
-  paths = FileList.new(args[:path])
-  paths.include(args.extras)
-  ENV["GIT_EXTERNAL_DIFF"]="./diff.rb"
-  sh "git diff macports-trunk..HEAD #{paths}"
+  inpaths = FileList[args[:path]].include(args.extras)
+
+  outfiles = Rake.application.top_level_tasks.grep(/^.*\.diff$/)
+  num_outfiles = outfiles.length
+
+  $diff_sources = {}
+
+  if num_outfiles == 0
+    diff inpaths
+
+  elsif num_outfiles > inpaths.length
+    raise "Too many output files specified"
+
+  else
+    inpaths.zip(outfiles) do |ip, of|
+      entry = { of || outfiles.last => [ip] }
+      puts entry
+      $diff_sources.update(entry) do |_, old, new|
+        old + new
+      end
+    end
+    puts $diff_sources
+  end
+end
+
+DIFF_PREREQ = proc do |outfile|
+  $diff_sources[outfile]
+end
+
+rule ".diff" => DIFF_PREREQ do |t|
+  diff FileList[t.sources], t.name
+end
+
+task :check do
+  Rake.application.top_level_tasks.each { |t| puts t.class }
 end
 
 desc "Install source and post-commit hook, build Port index."
