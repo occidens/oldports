@@ -1,0 +1,6 @@
+* TODO libtk-img
+  - http://packages.ubuntu.com/trusty/libtk-img
+  - https://github.com/stepan-mitkin/drakon_editor/issues/6#issuecomment-188855963
+* TODO drakon
+  - https://github.com/stepan-mitkin/drakon_editor
+  - http://sourceforge.net/projects/drakon-editor/files/drakon_editor1.27.zip/download
