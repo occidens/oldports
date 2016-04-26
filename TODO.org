@@ -16,3 +16,9 @@ libreadline-dev
 * TODO drip
 - [[https://github.com/Homebrew/homebrew/blob/master/Library/Formula/drip.rb][Homebrew formula]]
 - [[https://github.com/ninjudd/drip/blob/master/bin/drip][drip]] bin
+* TODO libtk-img
+  - http://packages.ubuntu.com/trusty/libtk-img
+  - https://github.com/stepan-mitkin/drakon_editor/issues/6#issuecomment-188855963
+* TODO drakon
+  - https://github.com/stepan-mitkin/drakon_editor
+  - http://sourceforge.net/projects/drakon-editor/files/drakon_editor1.27.zip/download
