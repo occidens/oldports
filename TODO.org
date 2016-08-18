@@ -1,0 +1,18 @@
+#+TITLE: Ports
+#+STARTUP: indent
+
+libffi
+libreadline-dev
+
+- [X] ocaml
+- [X] ocaml-camplp4
+- [X] ocaml-findlib
+- [ ] ocamlfind
+- [ ] ocaml-core
+- [ ] ocaml-async
+- [ ] ctypes
+- [ ] ctypes-foreign
+
+* TODO drip
+- [[https://github.com/Homebrew/homebrew/blob/master/Library/Formula/drip.rb][Homebrew formula]]
+- [[https://github.com/ninjudd/drip/blob/master/bin/drip][drip]] bin
